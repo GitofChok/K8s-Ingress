@@ -1,0 +1,10 @@
+# เพิ่มบรรทัดข้างล่างลงไฟล์ hosts
+# Linux : /etc/hosts
+# Windows : C:\Windows\System32\drivers\etc\hosts (เปิด Notepad แบบ Run as administrator)
+
+# ถ้าใช้ minikube บน Linux (driver ที่เข้า IP node ได้ตรงๆ) ใช้ IP ของ minikube
+# ดูได้จากคำสั่ง  minikube ip
+# 192.168.49.2   www.id-594.com admin.id-594.com
+
+# ถ้าใช้ Windows / Mac กับ docker driver ต้องเปิด minikube tunnel แล้วใช้ 127.0.0.1
+127.0.0.1   www.id-594.com admin.id-594.com

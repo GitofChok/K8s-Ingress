@@ -1,0 +1,64 @@
+# ConfigMap research-files สร้างจากโฟลเดอร์ app-research ด้วย deploy.sh
+# ไฟล์ที่แก้แล้วเก็บใน PVC จะได้ไม่หายตอน pod restart
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: research-data
+  namespace: id-594
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-research
+  namespace: id-594
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: app-research
+  template:
+    metadata:
+      labels:
+        app: app-research
+    spec:
+      containers:
+      - name: python
+        image: python:3.12-alpine
+        command: ["python", "-u", "/app/app.py"]
+        env:
+        - name: DOMAIN
+          value: id-594.com
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: code
+          mountPath: /app
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: code
+        configMap:
+          name: research-files
+      - name: data
+        persistentVolumeClaim:
+          claimName: research-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-research
+  namespace: id-594
+spec:
+  selector:
+    app: app-research
+  ports:
+  - port: 80
+    targetPort: 8080
